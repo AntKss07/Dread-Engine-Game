@@ -61,8 +61,11 @@ Clone the repository and install in editable mode:
 ```bash
 git clone https://github.com/srisudharsanank/dread-engine.git
 cd "dread-engine"
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+# On Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# On Linux / macOS:
+source .venv/bin/activate
+
 pip install -e ".[dev]"
 ```
 
