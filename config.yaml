@@ -1,0 +1,20 @@
+# Dread Engine Configuration
+backend: "ollama"  # "ollama" or "llamacpp"
+endpoint: "http://127.0.0.1:11434"
+model: "qwen2.5:7b-instruct"
+temperature: 0.7
+timeout_seconds: 15.0
+max_tokens: 300
+
+# Gameplay & Rules
+difficulty: "normal"  # "story", "normal", "nightmare"
+default_scenario: "the_last_ofrenda"
+enable_hallucinations: true
+
+# Audio (Piper TTS)
+voice_enabled: false
+voice_model: "en_US-lessac-medium"
+
+# Storage
+save_dir: "saves"
+transcript_dir: "transcripts"
