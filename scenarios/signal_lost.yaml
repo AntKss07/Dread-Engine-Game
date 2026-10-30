@@ -1,0 +1,190 @@
+id: "signal_lost"
+title: "Signal Lost: Station 7"
+theme: "Isolated Polar Cosmic Horror"
+intro: >
+  The blizzard outside Station 7 howls at ninety knots, shaking the corrugated steel walls of the Antarctic outpost.
+  Three hours ago, the automated distress beacon went dead.
+  The sub-level generator is sputtering, temperatures are dropping below freezing, and the frost on the inner windows
+  is crystallizing in geometric patterns that make your eyes ache.
+  You need to reboot the communication relay, restore the primary thermal core, and discover what silenced the winter crew.
+start_location: "airlock"
+
+persona:
+  tone: "bleak, claustrophobic, clinical, mounting dread of cosmic insignificance"
+  vocabulary_cues:
+    - "sub-zero"
+    - "frostbite"
+    - "frequency"
+    - "permafrost"
+    - "static"
+    - "monolithic"
+    - "cryogenic"
+  forbidden_words:
+    - "magic"
+    - "witch"
+    - "vampire"
+    - "curse"
+  lore_primer: >
+    Station 7 is completely cut off from the civilized world by an impenetrable winter vortex.
+    The horror is isolation, the merciless cold, mechanical failure, and a low-frequency radio signal pulsing
+    from deep beneath the ice shelf that drives human synapses into feedback loops.
+
+locations:
+  airlock:
+    id: "airlock"
+    name: "Decompression Airlock"
+    description_seed: "Heavy blast doors seal out the Antarctic whiteout. Thick frost coats the decontamination suits hanging from the wall. A pressurized hatch leads north to the main corridor."
+    danger_level: 2
+    exits:
+      north:
+        target: "corridor"
+        direction: "north"
+        description: "North through the reinforced hatch into the main living corridor."
+
+  corridor:
+    id: "corridor"
+    name: "Main Habitat Corridor"
+    description_seed: "Flickering emergency red lamps cast long shivering shadows across the grated steel deck. Doors lead south to the airlock, west to the comms center, east to the laboratory, and down to the generator room."
+    danger_level: 2
+    exits:
+      south:
+        target: "airlock"
+        direction: "south"
+        description: "South back to the airlock."
+      west:
+        target: "comms"
+        direction: "west"
+        description: "West into the radio communications hub."
+      east:
+        target: "lab"
+        direction: "east"
+        description: "East into the cryo-geology laboratory."
+      down:
+        target: "generator"
+        direction: "down"
+        description: "A ladder hatch descending to the sub-level geothermal generator."
+
+  comms:
+    id: "comms"
+    name: "Radio Communications Hub"
+    description_seed: "Racks of oscilloscopes and satellite transmitters hiss with unbroken white noise. A green phosphor monitor repeats: 'TRANSMITTER OFFLINE - CALIBRATE DIODE'."
+    danger_level: 3
+    exits:
+      east:
+        target: "corridor"
+        direction: "east"
+        description: "East into the main corridor."
+
+  lab:
+    id: "lab"
+    name: "Cryo-Geology Laboratory"
+    description_seed: "A central glass containment cylinder holds an ancient cylinder of ice drilled from four kilometers down. The ice has melted from the inside out, leaving the cylinder shattered."
+    danger_level: 4
+    exits:
+      west:
+        target: "corridor"
+        direction: "west"
+        description: "West into the corridor."
+
+  generator:
+    id: "generator"
+    name: "Sub-Level Generator Bay"
+    description_seed: "A massive diesel turbine groans with irregular wheezes. The room is freezing, smelling of stale fuel and ozone."
+    danger_level: 4
+    exits:
+      up:
+        target: "corridor"
+        direction: "up"
+        description: "Up the metal ladder to the habitat corridor."
+
+items:
+  flare:
+    id: "flare"
+    name: "emergency road flare"
+    description: "A high-intensity phosphorus flare capable of burning underwater or in freezing gale winds."
+    location: "airlock"
+    usable_on: ["generator", "self"]
+    tags: ["light", "heat"]
+    consumable: true
+    grants_sanity: 5
+
+  copper_fuse:
+    id: "copper_fuse"
+    name: "heavy ceramic fuse"
+    description: "A 40-amp ceramic replacement fuse, pristine in its moisture-proof wrapper."
+    location: "lab"
+    usable_on: ["generator"]
+    tags: ["electrical", "tool"]
+    consumable: false
+    grants_flag: "repaired_generator"
+
+  frequency_card:
+    id: "frequency_card"
+    name: "rescue beacon cipher card"
+    description: "A laminated plastic card listing emergency distress frequencies and encrypted transponder codes."
+    location: "comms"
+    usable_on: ["comms", "self"]
+    tags: ["data"]
+    consumable: false
+    grants_flag: "calibrated_radio"
+
+entities:
+  signal_entity:
+    id: "signal_entity"
+    name: "The Whiteout Static"
+    description: "A distortion in the air that hums like an amplified carrier wave, shivering with geometric crystalline static."
+    behavior: "stalker"
+    appears_when:
+      dread_gte: 7
+    acts_when: "dread_max"
+    attack_hp: 2
+    attack_sanity: 20
+    active_message: "The radio static bursts through your skull in a deafening whine of cold geometry."
+
+clues:
+  clue_signal_origin:
+    id: "clue_signal_origin"
+    name: "the seismic logbook"
+    text_hint: "The log confirms the transmission didn't originate from space—it came from eight miles below the ice sheet."
+    location: "lab"
+
+  clue_crew_tape:
+    id: "clue_crew_tape"
+    name: "the audio reel"
+    text_hint: "Dr. Alvarez's final recording: 'It mimics the radio hum to coax you outside. Fix the generator before you transmit.'"
+    location: "comms"
+
+dread_triggers:
+  - event: "turn"
+    delta: 1
+
+sanity_events:
+  - trigger: "radio_static"
+    delta: -10
+    message: "A high pitched resonant frequency pierces your ear drums."
+
+endings:
+  ending_rescue:
+    id: "ending_rescue"
+    title: "Carrier Signal Locked"
+    is_win: true
+    condition:
+      location: "comms"
+      repaired_generator: true
+      calibrated_radio: true
+    text_seed: >
+      The generator roars to life with a solid industrial hum, flooding the outpost with warm air.
+      At the radio console, you punch in the rescue cipher. The static breaks, and a human voice answers from McMurdo Station:
+      'Station 7, we read you loud and clear. Heavy lift chopper is inbound. Hold tight.'
+      Outside, the blizzard continues to howl, but the frost withdraws from the glass. You survived the long dark.
+
+  ending_freeze:
+    id: "ending_freeze"
+    title: "Hypothermic Twilight"
+    is_win: false
+    condition:
+      location: "airlock"
+      flags_freeze: true
+    text_seed: >
+      The heat never returns. As your core temperature plunges, a strange, deceptive warmth washes over you.
+      You sit against the bulkhead, your eyes closing as the whiteout hums its final lullaby.

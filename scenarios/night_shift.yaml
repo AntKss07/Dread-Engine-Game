@@ -1,0 +1,186 @@
+id: "night_shift"
+title: "Night Shift: Blackwood Museum"
+theme: "Urban Supernatural Thriller"
+intro: >
+  Your first graveyard shift as sole night custodian at the Blackwood Museum of Antiquities began at 11:00 PM.
+  At midnight, the perimeter security system tripped, the emergency exits magnetically locked,
+  and the radio dispatcher's voice turned into dry laughter before going completely dead.
+  The vintage maritime and Victorian exhibits on the second floor are shifting in their display cases.
+  To make it until the 6:00 AM shift turnover, you must secure the master breaker, retrieve the override keycard,
+  and avoid whatever walks the marble galleries when the lights go out.
+start_location: "lobby"
+
+persona:
+  tone: "suspenseful, sharp, urban supernatural dread, heavy echo of empty halls"
+  vocabulary_cues:
+    - "linoleum"
+    - "display case"
+    - "mannequin"
+    - "fluorescent"
+    - "surveillance"
+    - "shadowy"
+  forbidden_words:
+    - "magic"
+    - "dungeon"
+    - "castle"
+    - "goblin"
+  lore_primer: >
+    The museum houses antiquities collected from forgotten shipwrecks and Victorian estates.
+    When unobserved, exhibits subtly change positions. Don't stare too long at the wax figures.
+
+locations:
+  lobby:
+    id: "lobby"
+    name: "Grand Marble Lobby"
+    description_seed: "Polished terrazzo floors reflect the dim neon of the front security kiosk. Heavy bronze turnstiles bar the front doors. Archways lead north to the Hall of Antiquities and east to the Security Office."
+    danger_level: 1
+    exits:
+      north:
+        target: "antiquities"
+        direction: "north"
+        description: "North through tall archways into the Hall of Antiquities."
+      east:
+        target: "security"
+        direction: "east"
+        description: "East through a reinforced door into the Security Control Office."
+
+  security:
+    id: "security"
+    name: "Security Control Office"
+    description_seed: "A bank of black-and-white CRT monitors flickers erratically. Camera 4 shows an empty gallery, but every few seconds a pale face presses close against the lens."
+    danger_level: 2
+    exits:
+      west:
+        target: "lobby"
+        direction: "west"
+        description: "West back into the grand lobby."
+
+  antiquities:
+    id: "antiquities"
+    name: "Hall of Antiquities"
+    description_seed: "Glass vitrines contain 19th-century diving helmets, taxidermy raptors, and an obsidian Aztec mirror. A carpeted grand staircase leads up to the Mezzanine."
+    danger_level: 3
+    exits:
+      south:
+        target: "lobby"
+        direction: "south"
+        description: "South into the lobby."
+      up:
+        target: "mezzanine"
+        direction: "up"
+        description: "Up the carpeted stairs to the mezzanine floor."
+
+  mezzanine:
+    id: "mezzanine"
+    name: "The Mezzanine Gallery"
+    description_seed: "Dim spotlights illuminate Victorian wax mannequins dressed in period mourning gowns. One of the figures in the corner appears to have turned its head toward the stairs."
+    danger_level: 4
+    exits:
+      down:
+        target: "antiquities"
+        direction: "down"
+        description: "Down the stairs to the Hall of Antiquities."
+      north:
+        target: "archive"
+        direction: "north"
+        description: "North through a vault door into the Restoration Archives."
+
+  archive:
+    id: "archive"
+    name: "Restoration Archives"
+    description_seed: "Steel worktables are covered in chemical solvents, magnifying lenses, and uncataloged wooden crates from the 1890s."
+    danger_level: 3
+    exits:
+      south:
+        target: "mezzanine"
+        direction: "south"
+        description: "South into the mezzanine."
+
+items:
+  flashlight:
+    id: "flashlight"
+    name: "heavy-duty maglite"
+    description: "A heavy anodized aluminum flashlight that doubles as a sturdy blunt instrument."
+    location: "security"
+    usable_on: ["self", "mannequin"]
+    tags: ["light", "tool"]
+    consumable: false
+    grants_sanity: 5
+
+  keycard:
+    id: "keycard"
+    name: "master security keycard"
+    description: "A magnetic access card labeled 'DIRECTOR - LEVEL 4'."
+    location: "archive"
+    usable_on: ["lobby", "security"]
+    tags: ["key", "tool"]
+    consumable: false
+    grants_flag: "unlocked_exit"
+
+  salt_shaker:
+    id: "salt_shaker"
+    name: "breakroom salt container"
+    description: "A cardboard cylinder of coarse iodized salt left behind by the day shift."
+    location: "security"
+    usable_on: ["mannequin", "antiquities"]
+    tags: ["ward"]
+    consumable: true
+
+entities:
+  wax_watcher:
+    id: "wax_watcher"
+    name: "The Mourning Figure"
+    description: "A life-sized Victorian wax mannequin draped in black crepe, gliding soundlessly without moving its limbs."
+    behavior: "stalker"
+    appears_when:
+      dread_gte: 6
+    acts_when: "dread_max"
+    attack_hp: 1
+    attack_sanity: 15
+    active_message: "The wax figure stands inches behind you, its synthetic glass eyes reflecting your sheer terror."
+
+clues:
+  clue_camera_blindspot:
+    id: "clue_camera_blindspot"
+    name: "the guard shift checklist"
+    text_hint: "Rule 3: If you hear footsteps on the mezzanine, shine your flashlight directly at the floor, never at the faces."
+    location: "security"
+
+  clue_archive_crate:
+    id: "clue_archive_crate"
+    name: "shipping manifest #118"
+    text_hint: "The master keycard was stored in the archival restoration room after the vault lock failed."
+    location: "antiquities"
+
+dread_triggers:
+  - event: "turn"
+    delta: 1
+
+sanity_events:
+  - trigger: "mannequin_movement"
+    delta: -10
+    message: "A mannequin's head abruptly snaps 90 degrees with a wooden click."
+
+endings:
+  ending_dawn:
+    id: "ending_dawn"
+    title: "Relief at Dawn"
+    is_win: true
+    condition:
+      location: "lobby"
+      unlocked_exit: true
+    text_seed: >
+      You swipe the master keycard against the lobby reader. A heavy hydraulic bolt disengages with a reassuring thud.
+      You push through the bronze turnstiles into the cool morning drizzle just as the city buses begin to roll down the avenue.
+      Behind the plate glass, the museum is still and dark once more. Your shift is finally over.
+
+  ending_curator:
+    id: "ending_curator"
+    title: "Permanent Exhibit"
+    is_win: false
+    condition:
+      location: "mezzanine"
+      wax_entrapment: true
+    text_seed: >
+      Your limbs feel stiff, heavy, cold as paraffin. As the darkness closes in, you find yourself standing motionless
+      in the corner of the gallery, eyes open, watching the empty stairs forever.

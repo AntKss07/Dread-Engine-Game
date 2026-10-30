@@ -1,0 +1,304 @@
+id: "the_last_ofrenda"
+title: "The Last Ofrenda"
+theme: "Dia de los Muertos / Gothic Horror"
+intro: >
+  The iron gates of Hacienda de la Luz groan shut behind you as midnight strikes on the eve of Día de los Muertos.
+  The scent of burning copal resin and rain-soaked earth hangs heavy in the chill night air.
+  Your late grandmother, Elena, built an ofrenda in the courtyard every November for fifty years to welcome the departed.
+  Tonight, the ancestral house is dark, the altar stands bare, and a sorrowful presence stirs in the shadows.
+  Before dawn breaks, you must reassemble the sacred offerings—the photograph, the veladora candle, the golden cempasúchil,
+  the pan de muerto, and the cool water—and speak the words of loving remembrance, or be claimed by the forgotten dead.
+start_location: "gate"
+
+persona:
+  tone: "warm, melancholic, atmospheric, deeply respectful of Mexican Day of the Dead traditions"
+  vocabulary_cues:
+    - "cempasúchil"
+    - "copal"
+    - "veladora"
+    - "papel picado"
+    - "adobe"
+    - "reverent"
+    - "ancestral"
+    - "marigold"
+  forbidden_words:
+    - "zombie"
+    - "ghoul"
+    - "slasher"
+    - "jump-scare"
+    - "fiend"
+  lore_primer: >
+    The departed are not monsters; they are lingering memories traversing the bridge of marigold petals.
+    Tension arises from the sorrow of fading into nonexistence if forgotten. Terror comes when unremembered shadows
+    reach out with cold grief. Respect the ritual.
+
+locations:
+  gate:
+    id: "gate"
+    name: "The Wrought-Iron Gate"
+    description_seed: "A high wrought-iron gate stands tall, shrouded in mist and creeping ivy. Cobblestones lead north toward the darkened courtyard."
+    danger_level: 1
+    exits:
+      north:
+        target: "courtyard"
+        direction: "north"
+        description: "A cobblestone path leading north toward the hacienda courtyard."
+
+  courtyard:
+    id: "courtyard"
+    name: "The Central Courtyard"
+    description_seed: "Arched stone colonnades embrace a central fountain. In the center rests a three-tiered wooden ofrenda altar draped in fading papel picado. Paths lead east to the garden, west to the cocina, south to the gate, and north to the chapel."
+    danger_level: 2
+    exits:
+      south:
+        target: "gate"
+        direction: "south"
+        description: "Back south toward the iron gate."
+      north:
+        target: "chapel"
+        direction: "north"
+        description: "North through heavy wooden doors into the family chapel."
+      west:
+        target: "cocina"
+        direction: "west"
+        description: "West under tiled eaves into the old cocina."
+      east:
+        target: "garden"
+        direction: "east"
+        description: "East into the walled flower garden."
+
+  chapel:
+    id: "chapel"
+    name: "The Family Chapel"
+    description_seed: "Stained-glass windows cast pale moonlit patterns over dusty pews. A crucifix and stone statues of saints watch in mournful vigil. A trapdoor leads down into the crypt, and doors lead south to the courtyard and west to the study."
+    danger_level: 3
+    exits:
+      south:
+        target: "courtyard"
+        direction: "south"
+        description: "South into the courtyard."
+      west:
+        target: "study"
+        direction: "west"
+        description: "West into the archivist's study."
+      down:
+        target: "crypt"
+        direction: "down"
+        description: "A stone staircase descending into the crypt beneath the altar."
+        locked: true
+        required_item: "iron_key"
+        locked_message: "A heavy iron padlock secures the crypt trapdoor. An antique key is required."
+
+  cocina:
+    id: "cocina"
+    name: "The Hacienda Cocina"
+    description_seed: "A hearth of Talavera tiles stands cold, yet the lingering aroma of anise, orange blossom, and cocoa still warms the kitchen air. A back door leads north to the covered well, and east to the courtyard."
+    danger_level: 2
+    exits:
+      east:
+        target: "courtyard"
+        direction: "east"
+        description: "East toward the courtyard."
+      north:
+        target: "well"
+        direction: "north"
+        description: "North into the service yard by the covered well."
+
+  well:
+    id: "well"
+    name: "The Covered Well"
+    description_seed: "A round stone well sits under a wooden canopy. A copper bucket hangs from a hemp rope, glistening with condensation in the cool midnight breeze."
+    danger_level: 3
+    exits:
+      south:
+        target: "cocina"
+        direction: "south"
+        description: "South back into the kitchen."
+
+  study:
+    id: "study"
+    name: "The Archivist's Study"
+    description_seed: "Bookshelves lined with leather-bound genealogies and parish ledgers flank an expansive mahogany desk. A velvet chair faces an unlit hearth."
+    danger_level: 2
+    exits:
+      east:
+        target: "chapel"
+        direction: "east"
+        description: "East back into the chapel."
+
+  garden:
+    id: "garden"
+    name: "The Cempasúchil Garden"
+    description_seed: "Vibrant golden marigolds bloom in dense rows, their pungent, sweet scent filling the air with warmth. A stone sundial stands in the center."
+    danger_level: 1
+    exits:
+      west:
+        target: "courtyard"
+        direction: "west"
+        description: "West back to the central courtyard."
+
+  crypt:
+    id: "crypt"
+    name: "The Stone Crypt"
+    description_seed: "Cold stone niches hold ancestral sarcophagi carved with family crests. A deep draft breathes through cracks in the limestone."
+    danger_level: 5
+    exits:
+      up:
+        target: "chapel"
+        direction: "up"
+        description: "Up the stone stairs into the family chapel."
+
+items:
+  marigolds:
+    id: "marigolds"
+    name: "cempasúchil petals"
+    description: "A radiant handful of fresh golden cempasúchil marigold blossoms whose fragrance guides traveling souls."
+    location: "garden"
+    usable_on: ["altar", "courtyard", "self"]
+    tags: ["ofrenda", "floral"]
+    consumable: false
+    grants_flag: "placed_marigolds"
+    grants_sanity: 5
+
+  veladora:
+    id: "veladora"
+    name: "veladora candle"
+    description: "A tall glass glass votive candle scented with pure copal wax, waiting to light the path."
+    location: "chapel"
+    usable_on: ["altar", "courtyard", "self"]
+    tags: ["ofrenda", "light"]
+    consumable: false
+    grants_flag: "placed_candle"
+    grants_sanity: 5
+
+  pan_de_muerto:
+    id: "pan_de_muerto"
+    name: "pan de muerto"
+    description: "A freshly baked round loaf dusted with crystalline sugar and crossed with dough bones, honoring the cycle of life."
+    location: "cocina"
+    usable_on: ["altar", "courtyard"]
+    tags: ["ofrenda", "food"]
+    consumable: false
+    grants_flag: "placed_bread"
+    grants_sanity: 5
+
+  water_pitcher:
+    id: "water_pitcher"
+    name: "clay pitcher of water"
+    description: "A rustic terracotta jug filled with cool well water to quench the thirst of wandering spirits."
+    location: "well"
+    usable_on: ["altar", "courtyard"]
+    tags: ["ofrenda", "water"]
+    consumable: false
+    grants_flag: "placed_water"
+    grants_sanity: 5
+
+  photo:
+    id: "photo"
+    name: "framed photograph of Elena"
+    description: "A silver-framed portrait of Elena in her youth, her eyes brimming with warmth and kindness."
+    location: "study"
+    usable_on: ["altar", "courtyard"]
+    tags: ["ofrenda", "relic"]
+    consumable: false
+    grants_flag: "placed_photo"
+    grants_sanity: 10
+
+  iron_key:
+    id: "iron_key"
+    name: "ornate iron key"
+    description: "A heavy wrought-iron key bearing the crest of the hacienda, found hidden beneath the garden sundial."
+    location: "garden"
+    usable_on: ["crypt", "chapel"]
+    tags: ["tool", "key"]
+    consumable: false
+
+entities:
+  ancestor_spirit:
+    id: "ancestor_spirit"
+    name: "La Sombra"
+    description: "A sorrowful silhouette formed of swirling copal smoke and autumn shadows, yearning for remembrance."
+    behavior: "stalker"
+    appears_when:
+      dread_gte: 6
+    acts_when: "dread_max"
+    attack_hp: 1
+    attack_sanity: 15
+    active_message: "La Sombra reaches out with cold, vaporous fingers. A heartbroken sigh chills your soul."
+
+clues:
+  clue_altar_levels:
+    id: "clue_altar_levels"
+    name: "the three tiers of the ofrenda"
+    text_hint: "The three tiers represent earth, the journey between realms, and the heavens. All five sacred offerings must be placed at the central courtyard altar."
+    location: "study"
+
+  clue_ancestral_names:
+    id: "clue_ancestral_names"
+    name: "the parish ledger"
+    text_hint: "Elena prayed that her descendants would speak the words of remembrance: 'Bienvenido a casa, te recordamos con amor.'"
+    location: "study"
+
+  clue_cempasuchil_path:
+    id: "clue_cempasuchil_path"
+    name: "the floral bridge"
+    text_hint: "The vibrant scent of cempasúchil cuts through spiritual mist, keeping wandering phantoms calm."
+    location: "garden"
+
+  clue_crypt_warning:
+    id: "clue_crypt_warning"
+    name: "the stone epitaph"
+    text_hint: "The crypt below holds only forgotten dust. The spirits seek the altar, not the tombs."
+    location: "crypt"
+
+dread_triggers:
+  - event: "turn"
+    delta: 1
+  - event: "examine_relic"
+    delta: 1
+
+sanity_events:
+  - trigger: "encounter_spirit"
+    delta: -15
+    message: "A spectral moan echoes through the corridor."
+
+endings:
+  ending_reunion:
+    id: "ending_reunion"
+    title: "The Golden Bridge of Petals"
+    is_win: true
+    condition:
+      location: "courtyard"
+      placed_photo: true
+      placed_candle: true
+      placed_marigolds: true
+      placed_bread: true
+      placed_water: true
+      spoken_remembrance: true
+    text_seed: >
+      As your voice carries the words of love into the night, the veladora flares with a serene amber flame.
+      The golden cempasúchil petals glow, forming a radiant pathway from the courtyard fountain into the heavens.
+      La Sombra steps into the light, and Elena's gentle, smiling face emerges from the vapor.
+      She touches your cheek with a warmth like morning sun. You are not alone. The dead are remembered, and peace embraces the hacienda.
+
+  ending_escape:
+    id: "ending_escape"
+    title: "Flight into the Fog"
+    is_win: false
+    condition:
+      location: "gate"
+      escaped_gate: true
+    text_seed: >
+      Terror overpowers your resolve. You force the iron gate open and stumble out into the moonless fog.
+      Behind you, the hacienda fades into silence, its ofrenda forever bare, leaving the forgotten spirits to wander the dark.
+
+  ending_crypt_lost:
+    id: "ending_crypt_lost"
+    title: "Lost in the Catacombs"
+    is_win: false
+    condition:
+      location: "crypt"
+      trapped_crypt: true
+    text_seed: >
+      The trapdoor slams shut above you with the weight of eternity.
+      In the freezing dark beneath the chapel, the whispers slowly become the only voice you know.
