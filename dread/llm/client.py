@@ -231,12 +231,19 @@ class MockLLM(BaseLLMClient):
 
         # Default smart response if schema is requested (Parser)
         if json_schema and "verb" in json_schema.get("properties", {}):
+            import re
+
+            from dread.llm.fallback import fallback_parse_action
+
+            match = re.search(r'Player Input:\s*"(.*?)"', prompt)
+            raw = match.group(1) if match else "look"
+            act = fallback_parse_action(raw)
             return json.dumps(
                 {
-                    "verb": "LOOK",
-                    "target": None,
-                    "instrument": None,
-                    "confidence": 0.95,
+                    "verb": act.verb.value,
+                    "target": act.target,
+                    "instrument": act.instrument,
+                    "confidence": act.confidence,
                 }
             )
 

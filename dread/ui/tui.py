@@ -8,7 +8,7 @@ from textual.widgets import Button, Footer, Input, Label, Static
 from dread.config import AppConfig
 from dread.engine.dice import DreadDice
 from dread.engine.rules import resolve
-from dread.engine.state import Action, GameState, SanityTier, TurnRecord
+from dread.engine.state import Action, EventType, GameState, SanityTier, TurnRecord
 from dread.llm.client import BaseLLMClient, create_llm_client
 from dread.llm.narrator import Narrator
 from dread.llm.parser import ActionParser
@@ -182,6 +182,8 @@ class DreadTUI(App):
         )
         self.state.record_visit(scenario.start_location)
         self.offline_fallback_active = False
+        self._narration_history: list[str] = []
+        self._debug_history: list[str] = []
 
     def compose(self) -> ComposeResult:
         """Compose layout widgets."""
@@ -221,6 +223,7 @@ class DreadTUI(App):
             f"{self.scenario.locations[self.state.location_id].description_seed}\n\n"
             "Type [bold]HELP[/bold] for permitted actions, or simply type your intention."
         )
+        self._narration_history.append(intro_text)
         self.query_one("#narration-text", Static).update(intro_text)
         self.query_one("#player-input", Input).focus()
 
@@ -276,12 +279,25 @@ class DreadTUI(App):
         ]
 
         # Step 3: Narrate
-        narration = self.narrator.narrate(
-            events=events,
-            state=self.state,
-            scenario=self.scenario,
-            hallucination_hints=hallu_hints,
-        )
+        meta_events = [
+            ev
+            for ev in events
+            if ev.type
+            in (
+                EventType.HELP_DISPLAYED,
+                EventType.INVENTORY_DISPLAYED,
+                EventType.GAME_SAVED,
+            )
+        ]
+        if meta_events:
+            narration = "\n".join(ev.message for ev in meta_events)
+        else:
+            narration = self.narrator.narrate(
+                events=events,
+                state=self.state,
+                scenario=self.scenario,
+                hallucination_hints=hallu_hints,
+            )
 
         self.offline_fallback_active = self.parser.used_fallback or self.narrator.used_fallback
 
@@ -301,10 +317,9 @@ class DreadTUI(App):
         self.state.log.append(record)
 
         # Step 5: Render
-        current_text = self.query_one("#narration-text", Static)
-        existing = current_text.renderable
-        new_content = f"{existing}\n\n[bold yellow]> {raw_input}[/bold yellow]\n{narration}"
-        current_text.update(new_content)
+        turn_display = f"[bold yellow]> {raw_input}[/bold yellow]\n{narration}"
+        self._narration_history.append(turn_display)
+        self.query_one("#narration-text", Static).update("\n\n".join(self._narration_history))
         self.query_one("#narration-scroll", VerticalScroll).scroll_end(animate=False)
 
         # Update status and debug drawer
@@ -346,7 +361,6 @@ class DreadTUI(App):
 
     def _update_debug_drawer(self, record: TurnRecord) -> None:
         """Append log to debug panel."""
-        debug_widget = self.query_one("#debug-text", Static)
         log_lines = [
             f"[bold cyan]Turn {record.turn}[/bold cyan] Action: {record.action.verb.value}"
         ]
@@ -356,8 +370,10 @@ class DreadTUI(App):
             log_lines.append("  [bold red]Validator Rejections:[/bold red]")
             for rej in record.validator_rejections:
                 log_lines.append(f"    - {rej}")
-        existing = debug_widget.renderable
-        debug_widget.update(f"{existing}\n" + "\n".join(log_lines))
+
+        self._debug_history.extend(log_lines)
+        debug_widget = self.query_one("#debug-text", Static)
+        debug_widget.update("\n".join(self._debug_history))
 
     def action_toggle_debug(self) -> None:
         """Toggle debug sidebar visibility."""
