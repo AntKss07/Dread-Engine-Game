@@ -94,7 +94,6 @@ class DreadTUI(App):
 
     #narration-text {
         color: #f7fafc;
-        line-height: 1.4;
     }
 
     #clarification-container {
@@ -146,7 +145,6 @@ class DreadTUI(App):
 
     #debug-text {
         color: #a0aec0;
-        font-size: 80%;
     }
     """
 
