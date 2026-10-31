@@ -59,7 +59,7 @@ ollama pull qwen2.5:7b-instruct
 ### 2. Install
 Clone the repository and install in editable mode:
 ```bash
-git clone https://github.com/srisudharsanank/dread-engine.git
+git clone https://github.com/AntKss07/Dread-Engine-Game.git
 cd "dread-engine"
 # On Windows (PowerShell):
 .venv\Scripts\Activate.ps1

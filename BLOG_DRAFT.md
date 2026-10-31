@@ -63,7 +63,7 @@ During your ordeal, the creeping terror warped your senses. Here is what your mi
 ## Code
 
 The complete source code is released under the MIT License on GitHub:
-- **Repository:** [dread-engine](https://github.com/srisudharsanank/dread-engine)
+- **Repository:** [Dread-Engine-Game](https://github.com/AntKss07/Dread-Engine-Game)
 - **Key Modules:**
   - `dread/engine/rules.py` — Deterministic state transitions and action resolution
   - `dread/llm/validator.py` — Consistency validator preventing hallucinations and spoilers
